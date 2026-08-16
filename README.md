@@ -5,4 +5,11 @@ Der ***Clamp Generator*** als Herzstück des Tools und im unteren Bereich ist ei
 ## Aufbau  
 Auf Basis Bootstrap 5.  
 HTML und Javascript sind gemeinsam in einer Datei angeführt - können jedoch auch getrennt abgelegt werden.  
+## `clamp()` CSS Funktion  
+Die `clamp()` CSS Funktion begrenzt einen Wert innerhalb eines Bereichs von Werten zwischen einem definierten Mindest- und einem Höchstwert.  
+Die Funktion nimmt drei Parameter ein:  
+- einen Mindestwert
+- einen bevorzugten Wert
+- einen maximal zulässigen Wert
 
+[Auszug aus developer.mozilla.org](https://developer.mozilla.org/de/docs/Web/CSS/Reference/Values/clamp)
