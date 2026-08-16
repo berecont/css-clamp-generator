@@ -13,3 +13,9 @@ Die Funktion nimmt drei Parameter ein:
 - einen maximal zulässigen Wert
 
 [Auszug aus developer.mozilla.org](https://developer.mozilla.org/de/docs/Web/CSS/Reference/Values/clamp)
+## Berechnung  
+**Die Berechnung folgt dieser Logik:**  
+Bei `Viewport-Breite X_min` soll die `Schrift Y_min` sein  
+Bei `Viewport-Breite X_max` soll die `Schrift Y_max` sein  
+Steigung = `(Y_max - Y_min) / (X_max - X_min)`   
+Achsenabschnitt = `Y_min - Steigung × X_min` 
