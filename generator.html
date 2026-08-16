@@ -1,0 +1,477 @@
+<div id="clampme" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">CSS clamp() Generator</h5>
+                <button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Schliessen"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">px</span>
+                        <input class="form-control" id="clampinput-px" type="text" readonly>
+                        <button class="btn btn-outline-secondary clamp-copy" type="button" data-copy-target="#clampinput-px" >kopieren</button>
+                    </div>
+                
+                    <div class="input-group">
+                        <span class="input-group-text">rem</span>
+                        <input class="form-control" id="clampinput-rem" type="text" readonly>
+                        <button class="btn btn-outline-secondary clamp-copy" type="button" data-copy-target="#clampinput-rem">kopieren</button>
+                    </div>
+                
+                </div>
+                <div class="row g-3 mb-3">
+
+                    <div class="col-sm-6">
+                        <label for="minValue" class="form-label">
+                            Min Value <span class="value-unit-label">(px)</span>
+                        </label>
+                        <input id="minValue" class="form-control" type="number" step="any" value="16">
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <label for="maxValue" class="form-label">
+                            Max Value <span class="value-unit-label">(px)</span>
+                        </label>
+                        <input id="maxValue" class="form-control" type="number" step="any" value="48">
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <label for="minViewport" class="form-label">
+                            Min Viewport <span class="viewport-unit-label">(px)</span>
+                        </label>
+                        <input id="minViewport" class="form-control" type="number" step="any" value="380">
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <label for="maxViewport" class="form-label">
+                            Max Viewport <span class="viewport-unit-label">(px)</span>
+                        </label>
+                        <input id="maxViewport" class="form-control" type="number" step="any" value="1320">
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="rootFontSize" class="form-label">Root Font Size <span>(px)</span></label>
+                        <input id="rootFontSize" class="form-control" type="number" value="16">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="rootViewportSize" class="form-label">Root Viewport Size <span>(px)</span></label>
+                        <input id="rootViewportSize" class="form-control" type="number" value="16">
+                    </div>     
+                    
+                    <div class="col-sm-6">
+                        <span class="me-3">Value Einheit</span>
+                        <button type="button" class="btn btn-outline-secondary bg-dark text-white" data-unit-group="value" data-unit="px">px</button>
+                        <button type="button" class="btn btn-outline-secondary" data-unit-group="value" data-unit="rem">rem</button>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <span class="me-3">Viewport Einheit</span>
+                        <button type="button" class="btn btn-outline-secondary bg-dark text-white" data-unit-group="viewport" data-unit="px">px</button>
+                        <button type="button" class="btn btn-outline-secondary" data-unit-group="viewport" data-unit="rem">rem</button>
+                    </div>  
+                    
+                </div>
+                <div class="row g-3 mt-5 mb-3 border-top border-secondary">
+    			    <div class="base-size mb-3">
+    			        <label class="form-label">Basiseinheit</label>
+    			        <input id="clamp-base-size" class="form-control" type="number" step="any" value="16">
+    			    </div>
+    			    
+    			    <div class="px-to-rem mb-3">
+    			    	<label class="form-label" for="ptr">PX nach REM</label>
+    			    	<div class="input-group">
+    			    		<span class="input-group-text">px</span>
+    			    		<input id="clamp-ptr" class="form-control" type="number" step="any" placeholder="px to rem">
+    			    		<label class="input-group-text" for="rem-output">rem</label>
+    			    		<input id="clamp-rem-output" class="output form-control" type="text" readonly="" value="" onclick="this.setSelectionRange(0,this.value.length)" placeholder="0rem">			    		
+    			    	</div>
+    			    </div>
+    			    
+    			    <div class="rem-to-px mb-3">
+    			    	<label class="form-label" for="rtp">REM nach PX</label>
+    			    	<div class="input-group">
+    			    		<span class="input-group-text">rem</span>
+    			    		<input id="clamp-rtp" class="form-control" type="number" step="any" placeholder="rem to px">
+    			    		<label class="input-group-text" for="px-output">px</label>
+    			    		<input id="clamp-px-output" class="output form-control" type="text" readonly="" value="" onclick="this.setSelectionRange(0,this.value.length)" placeholder="0px">			    		
+    			    	</div>
+    			    </div>                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    
+/*** clamp() Generator ***/
+
+const clampOutputPx = document.querySelector('#clampinput-px');
+const clampOutputRem = document.querySelector('#clampinput-rem');
+
+const clampCopyButtons = document.querySelectorAll('.clamp-copy');
+
+const minValueInput = document.querySelector('#minValue');
+const maxValueInput = document.querySelector('#maxValue');
+
+const minViewportInput = document.querySelector('#minViewport');
+const maxViewportInput = document.querySelector('#maxViewport');
+
+const rootFontSizeInput = document.querySelector('#rootFontSize');
+const rootViewportSizeInput = document.querySelector('#rootViewportSize');
+
+const valueUnitButtons = document.querySelectorAll('[data-unit-group="value"]');
+const viewportUnitButtons = document.querySelectorAll('[data-unit-group="viewport"]');
+const valueUnitLabels = document.querySelectorAll('.value-unit-label');
+const viewportUnitLabels = document.querySelectorAll('.viewport-unit-label');
+
+let valueUnit = 'px';
+let viewportUnit = 'px';
+
+
+/**
+ * Zahl aus einem Input holen
+ */
+function getClampNumber(input, fallback = 0) {
+
+    const value = parseFloat(input.value);
+
+    return Number.isFinite(value)
+        ? value
+        : fallback;
+}
+
+/**
+ * Nachkommastellen sinnvoll kürzen
+ */
+function formatClampNumber(value) {
+
+    if (Math.abs(value) < 0.000001) {
+        return '0';
+    }
+
+    return parseFloat(
+        value.toFixed(4)
+    ).toString();
+}
+
+/**
+ * Value-Wert in px umrechnen
+ */
+function valueToPx(value) {
+
+    if (valueUnit === 'rem') {
+
+        const rootFontSize =
+            getClampNumber(rootFontSizeInput, 16);
+
+        return value * rootFontSize;
+    }
+
+    return value;
+}
+
+/**
+ * Viewport-Wert in px umrechnen
+ */
+function viewportToPx(value) {
+
+    if (viewportUnit === 'rem') {
+
+        const rootViewportSize =
+            getClampNumber(rootViewportSizeInput, 16);
+
+        return value * rootViewportSize;
+    }
+
+    return value;
+}
+
+/**
+ * px wieder in die gewählte Value-Einheit umrechnen
+ */
+function pxToValueUnit(value) {
+
+    if (valueUnit === 'rem') {
+
+        const rootFontSize =
+            getClampNumber(rootFontSizeInput, 16);
+
+        return value / rootFontSize;
+    }
+
+    return value;
+}
+
+/**
+ * clamp() berechnen
+ */
+function updateClamp() {
+
+    const minValue = getClampNumber(minValueInput);
+    const maxValue = getClampNumber(maxValueInput);
+
+    const minViewport = getClampNumber(minViewportInput);
+    const maxViewport = getClampNumber(maxViewportInput);
+
+    /*
+     * Eingaben zuerst in px umrechnen
+     */
+    const yMinPx = valueToPx(minValue);
+    const yMaxPx = valueToPx(maxValue);
+
+    const xMinPx = viewportToPx(minViewport);
+    const xMaxPx = viewportToPx(maxViewport);
+
+
+    if (xMaxPx === xMinPx) {
+
+        clampOutputPx.value = 'Ungültiger Viewport-Bereich';
+        clampOutputRem.value = 'Ungültiger Viewport-Bereich';
+
+        return;
+    }
+
+    /*
+     * Lineare Funktion
+     */
+    const slope =
+        (yMaxPx - yMinPx) /
+        (xMaxPx - xMinPx);
+
+    const interceptPx =
+        yMinPx - slope * xMinPx;
+
+    const vw =
+        slope * 100;
+
+    /*
+     * REM-Werte berechnen
+     */
+    const rootFontSize =
+        getClampNumber(rootFontSizeInput, 16);
+
+    const yMinRem =
+        yMinPx / rootFontSize;
+
+    const yMaxRem =
+        yMaxPx / rootFontSize;
+
+    const interceptRem =
+        interceptPx / rootFontSize;
+
+    /*
+     * Vorzeichen des vw-Anteils
+     */
+    const operator =
+        vw >= 0
+            ? '+'
+            : '-';
+
+    const vwFormatted =
+        formatClampNumber(Math.abs(vw));
+
+    /*
+     * PX-Ausgabe
+     */
+    clampOutputPx.value =
+        `clamp(` +
+        `${formatClampNumber(yMinPx)}px, ` +
+        `${formatClampNumber(interceptPx)}px ${operator} ${vwFormatted}vw, ` +
+        `${formatClampNumber(yMaxPx)}px` +
+        `)`;
+
+    /*
+     * REM-Ausgabe
+     */
+    clampOutputRem.value =
+        `clamp(` +
+        `${formatClampNumber(yMinRem)}rem, ` +
+        `${formatClampNumber(interceptRem)}rem ${operator} ${vwFormatted}vw, ` +
+        `${formatClampNumber(yMaxRem)}rem` +
+        `)`;
+}
+
+/**
+ * Einheit auswählen
+ */
+function setUnit(group, unit) {
+
+    const buttons =
+        group === 'value'
+            ? valueUnitButtons
+            : viewportUnitButtons;
+
+    buttons.forEach(button => {
+
+        const active =
+            button.dataset.unit === unit;
+
+        button.classList.toggle(
+            'bg-dark',
+            active
+        );
+
+        button.classList.toggle(
+            'text-white',
+            active
+        );
+    });
+
+
+    if (group === 'value') {
+
+        valueUnit = unit;
+
+        valueUnitLabels.forEach(label => {
+            label.textContent = `(${unit})`;
+        });
+
+    } else {
+
+        viewportUnit = unit;
+
+        viewportUnitLabels.forEach(label => {
+            label.textContent = `(${unit})`;
+        });
+    }
+
+
+    updateClamp();
+}
+
+/**
+ * Value-Einheiten
+ */
+valueUnitButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        setUnit(
+            'value',
+            button.dataset.unit
+        );
+    });
+});
+
+/**
+ * Viewport-Einheiten
+ */
+viewportUnitButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+        setUnit(
+            'viewport',
+            button.dataset.unit
+        );
+    });
+});
+
+/**
+ * Bei jeder Eingabe sofort neu berechnen
+ */
+[
+    minValueInput,
+    maxValueInput,
+    minViewportInput,
+    maxViewportInput,
+    rootFontSizeInput,
+    rootViewportSizeInput
+].forEach(input => {
+
+    input.addEventListener(
+        'input',
+        updateClamp
+    );
+});
+
+/**
+ * clamp() kopieren
+ */
+clampCopyButtons.forEach(button => {
+
+    button.addEventListener('click', async () => {
+
+        const targetSelector =
+            button.dataset.copyTarget;
+
+        const target =
+            document.querySelector(targetSelector);
+
+        if (!target || !target.value) {
+            return;
+        }
+
+
+        try {
+
+            await navigator.clipboard.writeText(
+                target.value
+            );
+
+            const oldText =
+                button.textContent;
+
+            button.textContent =
+                'kopiert';
+
+            setTimeout(() => {
+                button.textContent =
+                    oldText;
+            }, 1200);
+
+        } catch {
+
+            target.select();
+
+            document.execCommand('copy');
+        }
+    });
+});
+
+
+/**
+ * Initialberechnung
+ */
+updateClamp();    
+
+
+
+/*** PX und REM umrechnen ***/
+const baseInput = document.querySelector('#clamp-base-size');
+const pxInput = document.querySelector('#clamp-ptr');
+const remOutput = document.querySelector('#clamp-rem-output');
+
+const remInput = document.querySelector('#clamp-rtp');
+const pxOutput = document.querySelector('#clamp-px-output');
+
+function getNumber(input) {
+	return parseFloat(input.value) || 0;
+}
+
+function getBase() {
+	return getNumber(baseInput) || 16;
+}
+
+function updateConversions() {
+
+	const base = getBase();
+
+	const px = getNumber(pxInput);
+	const rem = getNumber(remInput);
+
+	remOutput.value = (px / base) + 'rem';
+	pxOutput.value = (rem * base) + 'px';
+}
+
+baseInput.addEventListener('input', updateConversions);
+pxInput.addEventListener('input', updateConversions);
+remInput.addEventListener('input', updateConversions);
+
+updateConversions();
+
+</script>
